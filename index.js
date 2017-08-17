@@ -8,7 +8,9 @@ import {
 	TouchableOpacity,
 } from 'react-native'
 
-const excludedProps = ['containerStyle', 'onPress', 'style', 'left', 'right', 'top', 'bottom']
+import omit from 'lodash/omit'
+
+const excludedProps = ['containerStyle', 'touchable', 'onPress', 'style', 'left', 'right', 'top', 'bottom']
 
 class TextWrap extends React.Component {
 	_textRef
@@ -19,22 +21,15 @@ class TextWrap extends React.Component {
 
 	_renderText = () => {
 		let textStyles = [styles.defaultText, this.props.style]
-		let cloneProps = { ...this.props }
-		excludedProps.forEach(propName => {
-			delete cloneProps[propName]
-		})
-		if (this.props.children) {
-			return <Text ref={ref => {if (ref) this._textRef = ref}} {...cloneProps} style={textStyles}>{this.props.children}</Text>
-		}
-		
-		return null
+		let cloneProps = omit(this.props, excludedProps)
+		return <Text ref={ref => {if (ref) this._textRef = ref}} {...cloneProps} style={textStyles}>{this.props.children}</Text>
 	}
 
 	_renderPart = (part) => {
 		if (!part) return null
 		if (part.render) return part.render()
 		if (part.icon) {
-			icon = <Image source={part.icon} style={part.style} />	
+			icon = <Image source={part.icon} style={[part.style]} />	
 			if (part.onPress) icon = <TouchableOpacity style={[]} onPress={part.onPress}>{icon}</TouchableOpacity>
 			return icon
 		}
@@ -42,20 +37,49 @@ class TextWrap extends React.Component {
 		return null
 	}
 
-	_combineParts = (leadingPart, text, trailingPart, wrapStyle) => {
-		let accum = [leadingPart, text, trailingPart].reduce((accum, curr) => ({
-			count: accum.count + (curr ? 1 : 0),
+	_combineParts = (parts, wrapStyle) => {
+		let accum = parts.reduce((accum, curr) => ({
+			count: accum.count + (!!curr ? 1 : 0),
 			last: curr || accum.last
 		}), { count: 0, last: null })
-		if (accum.count <= 1) return accum.last
+		if (accum.count == 1) return accum.last
 		
 		return (
 			<View style={[wrapStyle]}>
-				{leadingPart}
-				{text}
-				{trailingPart}
+				{parts}
 			</View>
 		)
+	}
+
+	_makeTouchable = text => {
+		const { onPress, touchable } = this.props
+		if (!onPress) return text
+		
+		let TouchableComponent, touchableStyle
+		if (!!touchable) {
+			TouchableComponent = touchable.component
+			touchableStyle = touchable.style
+		}
+
+		if (!TouchableComponent) TouchableComponent = TouchableOpacity
+		if (!touchableStyle) touchableStyle = []
+		
+		return <TouchableComponent style={[touchableStyle]} onPress={onPress}>{text}</TouchableComponent>
+	}
+
+	_wrapContainer = text => {
+		const { onPress, containerStyle, touchable } = this.props
+		if (!containerStyle) return text
+		
+		let hasWrapped = !!onPress || text.type === View
+		let hasTouchableStyle = touchable && touchable.style
+		if (!hasWrapped || hasTouchableStyle) {
+			text = <View style={[styles.defaultContainer]}>{text}</View>
+		}
+			
+		text.props.style.push(styles.defaultContainer, containerStyle)
+		
+		return text
 	}
 
 	render() {
@@ -66,25 +90,18 @@ class TextWrap extends React.Component {
 		let partBottom = this._renderPart(bottom)
 		let text = this._renderText()
 
-		if (onPress && text) {
-			text = <TouchableOpacity style={[]} onPress={onPress}>{text}</TouchableOpacity>
-		}
+		text = this._combineParts([partLeft, text, partRight], styles.horizontalWrap)
+		text = this._combineParts([partTop, text, partBottom], styles.verticalWrap)
 
-		text = this._combineParts(partLeft, text, partRight, styles.horizontalWrap)
-		text = this._combineParts(partTop, text, partBottom, styles.verticalWrap)
+		text = this._makeTouchable(text)
 
-		if (containerStyle) {
-			if (text.type === Text || text.type === Image) {
-				text = <View style={[]}>{text}</View>
-			}
-			text.props.style.push(styles.defaultContainer, containerStyle)
-		}
+		text = this._wrapContainer(text)
 		
 		return text
 	}
 }
 
-export default TextWrap
+export {TextWrap}
 
 const styles = StyleSheet.create({
 	verticalWrap: {
@@ -98,7 +115,7 @@ const styles = StyleSheet.create({
 
 	defaultText: {
 		// add common font style/color/size... here
-		backgroundColor: 'transparent'
+		backgroundColor: 'transparent',
 	},
 
 	defaultContainer: {
