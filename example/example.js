@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { Text as RNText, View, StyleSheet } from 'react-native'
 import Text from 'rn-text-wrap'
 
 export default class example extends React.Component {
@@ -9,8 +9,12 @@ export default class example extends React.Component {
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
-				<Text
-					onPress={() => { }}	
+        <Text
+          left={{
+            icon: require('./ic_launcher.png'),
+            onPress: ()=>console.log('on left press')
+          }}
+          onPress={()=>{console.log('on text press')}}
 					style={styles.instructions}>
           To get started, edit index.ios.js
         </Text>
