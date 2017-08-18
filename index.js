@@ -72,7 +72,7 @@ class TextWrap extends React.Component {
 		if (!containerStyle) return text
 		
 		let hasWrapped = !!onPress || text.type === View
-		let hasTouchableStyle = touchable && touchable.style
+		let hasTouchableStyle = !!onPress && touchable && touchable.style
 		if (!hasWrapped || hasTouchableStyle) {
 			text = <View style={[styles.defaultContainer]}>{text}</View>
 		}
