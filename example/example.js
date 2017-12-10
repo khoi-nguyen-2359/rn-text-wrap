@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text as RNText, View, StyleSheet } from 'react-native'
-import Text from 'rn-text-wrap'
+import {TextWrap as Text} from 'rn-text-wrap'
 
 export default class example extends React.Component {
   render() {
