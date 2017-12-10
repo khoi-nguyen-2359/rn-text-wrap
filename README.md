@@ -25,7 +25,7 @@ Before
 
 Now
 ```javascript
-<Text onPress={onPressHandler}></Text>
+<Text onPress={onPressHandler}>Press me</Text>
 ```
 
 ### Leading/Trailing parts
@@ -51,17 +51,23 @@ Before
 
 Now 
 ```javascript
-	<Text left={{
-			onPress: onPressLeadingImage
-			icon: leadingImageSource,
-			style: leadingImageStyle,
-			render: returnAnyComponent	// giving this will ignore above two
-		}}	// or top={...}
-		right={{
-			onPress: onPressTrailingImage
-			icon: trailingImageSource,
-			style: trailingImageStyle,
-			render: returnAnyComponent	// giving this will ignore above two
-		}}	// or bottom={...}
-	>Text goes here</Text>
+<Text left={{
+		onPress: onPressLeadingImage
+		icon: leadingImageSource,
+		style: leadingImageStyle,
+		render: returnAnyComponent	// giving this will ignore above two
+	}}	// or top={...}
+	right={{
+		onPress: onPressTrailingImage
+		icon: trailingImageSource,
+		style: trailingImageStyle,
+		render: returnAnyComponent	// giving this will ignore above two
+	}}	// or bottom={...}
+>Text goes here</Text>
 ```
+
+This library was tested with:
+```
+"react": "16.0.0-alpha.12",
+"react-native": "0.46.4",
+		```
