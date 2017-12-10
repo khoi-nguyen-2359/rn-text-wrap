@@ -1,19 +1,19 @@
 {
 	"name": "rn-text-wrap",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"main": "./index.js",
 	"repository": {
-    "type": "git",
-    "url": "https://github.com/khoi-nguyen-2359/rn-text-wrap"
-  },
+		"type": "git",
+		"url": "https://github.com/khoi-nguyen-2359/rn-text-wrap"
+	},
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
 		"test": "jest"
 	},
 	"peerDependencies": {
-    "react": "*",
-    "react-native": "*"
-  },
+		"react": "*",
+		"react-native": "*"
+	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",
 		"babel-preset-react-native": "2.1.0",
